@@ -1,0 +1,25 @@
+{
+  "name": "7drl-2021",
+  "version": "1.0.0",
+  "description": "7 Day Roguelike challenge, 2021",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bradmalloy/7DRL-2021.git"
+  },
+  "author": "@brad_io",
+  "bugs": {
+    "url": "https://github.com/bradmalloy/7DRL-2021/issues"
+  },
+  "homepage": "https://github.com/bradmalloy/7DRL-2021#readme",
+  "dependencies": {
+    "rot-js": "^2.1.5"
+  },
+  "devDependencies": {
+    "tsify": "^5.0.2",
+    "typescript": "^4.1.5"
+  }
+}
