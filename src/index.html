@@ -1,7 +1,34 @@
 <html>
     <head>
+        <!-- Meta and SEO stuff -->
+        <meta charset="utf-8" />
+        <meta name="description"
+            content="A roguelike automation game created in 7 days for 7DRL." />
+        <meta name="keywords" content="roguelike,game,automation,7DRL,2021" />
+        <meta name="author" content="@brad_io" />
+        <!-- <meta name=”viewport” content=”width=device-width, initial-scale=1″> -->
+        <meta name="revision" content="2021-03-07" />
+        <meta property="og:title" content="$GAME_TITLE" />
+        <meta property="og:type" content="website" />
+        <!-- <meta property="og:url" content="https://eft-graph.com" /> -->
+        <!-- <meta property="og:image" content="https://eft-graph.com/img/screenshot.png" /> -->
+        <meta property="og:description" content="A roguelike automation game created in 7 days for 7DRL." />
+        <title>$GAME_TITLE - A game for the 2021 7DRL challenge</title>
+        
+        <!-- Browserified game -->
         <script src="./bundle.js"></script>
+        <!-- Minimal CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+        
     </head>
     <body>
+        <div id="header">
+            <h1>$GAME_TITLE</h1>
+            <small>A 7DRL game about automation by @brad_io</small>
+        </div>
+        <div id="mainContentWrapper">
+            <!-- The game is rendered in this -->
+            <div id="gameCanvas"></div>
+        </div>
     </body>
 </html>
