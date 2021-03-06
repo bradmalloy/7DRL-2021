@@ -1,18 +1,36 @@
+import { Game } from "./index.js";
+
 class RealTimeEngine {
 	_loop = [];
     _lock = 0;
-    _delay = 100;
-    _interval = null;
+    _gameTickDelay = 100; // game updates/second
+    _gameTickTimer = null;
+    _refreshDelay = 100; // 10 FPS
+    _refreshTimer = null;
 
-	constructor(delayInMillis) {
+    /**
+     * Create a new RealTimeEngine with a given simulation rate and
+     * framerate.
+     * @param {number} gameTickDelay delay between game ticks, in milliseconds
+     * @param {number} refreshRate number of times to draw display, per second
+     */
+	constructor(gameTickDelay, refreshRate) {
         this._lock = 1;
         this._loop = [];
-        this._interval = null;
-        if (delayInMillis && typeof(delayInMillis) == "number") {
-            this._delay = delayInMillis;
+
+        this._gameTickTimer = null; // setInterval on start()
+        if (gameTickDelay) {
+            this._gameTickDelay = gameTickDelay;
         }
+
+        this._displayTimer = null; // setInterval on start()
+        if (refreshRate) {
+            this._refreshDelay = calculateDelay(refreshRate);
+        }
+
         this.unlock = this.unlock.bind(this);
-        this.doTick = this.doTick.bind(this);
+        this.doGameTick = this.doGameTick.bind(this);
+        this.doDisplayTick = this.doDisplayTick.bind(this);
         this.add = this.add.bind(this);
         this.remove = this.remove.bind(this);
         this.start = this.start.bind(this);
@@ -41,14 +59,15 @@ class RealTimeEngine {
 	lock() {
         console.debug("Locking engine.");
         this._lock++;
-        clearInterval(this._interval);
+        clearInterval(this._gameTickTimer);
+        clearInterval(this._displayTimer);
 		return this;
     }
     
     /**
      * Run through all the items in the _loop once.
      */
-    doTick() {
+    doGameTick() {
         for (let i = 0; i < this._loop.length; i++) {
             let thisItem = this._loop[i];
             if (thisItem && thisItem.act != null) {
@@ -59,6 +78,13 @@ class RealTimeEngine {
         }
     }
 
+    /**
+     * Draw everything on the amp.
+     */
+    doDisplayTick() {
+        Game._drawWholeMap();
+    }
+
 	/**
 	 * Resume execution (paused by a previous lock)
 	 */
@@ -67,10 +93,21 @@ class RealTimeEngine {
 		if (!this._lock) { throw new Error("Cannot unlock unlocked engine"); }
 		this._lock--;
 
-        this._interval = window.setInterval(this.doTick, this._delay);
+        this._gameTickTimer = window.setInterval(this.doGameTick, this._gameTickDelay);
+        this._displayTimer = window.setInterval(this.doDisplayTick, this._refreshDelay);
 
 		return this;
 	}
+}
+
+/**
+ * Calculates how long, in millliseconds, to wait in order
+ * to accomplish the desired number of ticks/second.
+ * ex: 1 FPS = 1000 ms, 10 FPS = 100 ms, 30 FPS = 33.333
+ * @param {number} refreshRate desired FPS
+ */
+function calculateDelay(refreshRate) {
+    return Math.floor(1000 / refreshRate);
 }
 
 export { RealTimeEngine };

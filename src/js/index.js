@@ -1,7 +1,12 @@
 import { Extractor } from "./extractor.js";
 import { Loader } from "./loader.js";
+import { Conveyor } from "./conveyor.js";
+import { Box } from "./storage.js";
 import { RealTimeEngine } from "./realTimeEngine.js";
 import { Tile } from "./tile.js";
+
+const frameDelay = 1000; // in millisecond delay
+const defaultRefreshRate = 10; // in FPS
 
 var tileSet = document.createElement("img");
 tileSet.src = "urizen-700.png";
@@ -13,15 +18,17 @@ var options = {
     tileHeight: 24,
     tileSet: tileSet,
     tileMap: {
-        "?": [1276, 1277],  // question mark
-        ".": [288, 678],    // ground
-        "e": [1276, 470],   // extractor
-        "Ln": [626, 964],   // Loader, north input
-        "Ls": [626, 938],   // Loader, south input
-        "Lw": [600, 938],   // Loader, west input
-        "Le": [574, 938],   // Loader, east input
-        "cv": [678, 886],   // Conveyer, vertical
-        "ch": [652, 886]    // Conveyer, horizontal
+        "?": [1276, 1277],      // question mark
+        "coal": [1276, 1277],   // temp question mark
+        ".": [418, 54],         // ground
+        "e": [1276, 470],       // extractor
+        "Ln": [626, 964],       // Loader, north input
+        "Ls": [626, 938],       // Loader, south input
+        "Lw": [600, 938],       // Loader, west input
+        "Le": [574, 938],       // Loader, east input
+        "cv": [652, 886],       // Conveyor, vertical
+        "ch": [678, 886],       // Conveyor, horizontal
+        "b": [964, 1068]        // Box, small
     },
     width: 20,
     height: 20
@@ -43,7 +50,7 @@ const Game = {
     engine: null,
     map: {},
     init: function() {
-        this.engine = new RealTimeEngine(100);
+        this.engine = new RealTimeEngine(frameDelay, defaultRefreshRate);
         this.map = {};
         this.display = new ROT.Display(options);
         gameWrapper.appendChild(this.display.getContainer());
@@ -58,12 +65,18 @@ const Game = {
 
         // just to test, let's put an extractor in there
         let extractor = new Extractor(5,5);
-        let loadN = new Loader(5, 6, "north");
-        let loadE = new Loader(4,5,"east");
-        let loadS = new Loader(5, 4, "south");
+        // let loadN = new Loader(5, 6, "north");
+        // let loadE = new Loader(4,5,"east");
+        // let loadS = new Loader(5, 4, "south");
         let loadW = new Loader(6,5,"west");
+        let conveyor1 = new Conveyor(7,5, "west");
+        let conveyor2 = new Conveyor(8, 5, "west");
+        let conveyor3 = new Conveyor(9, 5, "west");
+        let boxLoader = new Loader(10, 5, "west");
+        let box1 = new Box(11, 5);
 
         extractor.start();
+        loadW.start();
 
         const clock = new Clock();
         

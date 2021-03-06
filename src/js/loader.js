@@ -1,51 +1,66 @@
+import { Building } from "./building.js";
+import { Inventory } from "./inventory.js";
 import { Game } from "./index.js";
 
-class Loader {
-    _repr = null;
+const facingTile = {
+    "north": "Ln",
+    "south": "Ls",
+    "west": "Lw",
+    "east": "Le"
+}
+
+class Loader extends Building {
     constructor(x, y, inDir) {
-        this._x = x;
-        this._y = y;
+        // Pick the tile based on facing
+        let repr = facingTile[inDir];
+        super(x, y, repr);
+        this.inventory = new Inventory(1);
         // inDir can be "north", "south", "east", "west"
         if (inDir == "north") {
-            this._in = [x, y - 1];
-            this._repr = "Ln";
+            this._inKey = `${x},${y - 1}`;
         } else if (inDir == "south") {
-            this._in = [x, y + 1];
-            this._repr = "Ls";
+            this._inKey = `${x},${y + 1}`;
         } else if (inDir == "east") {
-            this._in = [x + 1, y];
-            this._repr = "Le";
+            this._inKey = `${x + 1},${y}`;
         } else if (inDir == "west") {
-            this._in = [x - 1, y];
-            this._repr = "Lw";
+            this._inKey = `${x - 1},${y}`;
         } else {
             console.error("Bad inDir!");
         }
-
-        Game.map[this.getPositionKey()].addActor(this);
-        Game.engine.add(this);
-    }
-
-    start() {
-        this._running = true;
-    }
-
-    represent() {
-        // The facing of the loader impacts the 
-        // facing of the tile
-        return this._repr;
-    }
-
-    getPositionKey() { return `${this._x},${this._y}`; }
-
-    stop() {
-        this._running = false;
+        // set our output tile
+        if (inDir == "north") {
+            this._outKey = `${x},${y + 1}`;
+        } else if (inDir == "south") {
+            this._outKey = `${x},${y - 1}`;
+        } else if (inDir == "east") {
+            this._outKey = `${x - 1},${y}`;
+        } else if (inDir == "west") {
+            this._outKey = `${x + 1},${y}`;
+        } else {
+            console.error("Bad inDir!");
+        }
     }
 
     act() {
         if (this._running) {
             // check to see if the "in" tile has an inventory
-            // if it does, take out whatever's there and push it out the other side
+            let inTile = Game.map[this._inKey];
+            if (inTile.actor && inTile.actor.inventory && inTile.actor.inventory.hasItems()) {
+                // if it does, take out whatever's there and push it out the other side
+                let typeToTake = inTile.actor.inventory.getRandomItemType();
+                let result = inTile.actor.inventory.remove(typeToTake);
+                if (result) {
+                    this.inventory.add(typeToTake);
+                }
+            }
+            let outTile = Game.map[this._outKey];
+            if (this.inventory.hasItems() && outTile.actor && outTile.actor.inventory) {
+                let typeToGive = this.inventory.getRandomItemType();
+                let result = outTile.actor.inventory.add(typeToGive);
+                if (result) {
+                    this.inventory.remove(typeToGive);
+                }
+            }
         }
     }
 }
