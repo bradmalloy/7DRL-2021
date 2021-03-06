@@ -1,0 +1,16 @@
+#mainContentWrapper {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: stretch;
+    width: 90%;
+}
+
+#gameCanvas {
+    order: 1;
+}
+
+#sidebar {
+    margin-left: 1em;
+    order: 2;
+}

@@ -15,13 +15,15 @@
         <meta property="og:description" content="A roguelike automation game created in 7 days for 7DRL." />
         <title>$GAME_TITLE - A game for the 2021 7DRL challenge</title>
         
-        <!-- Browserified game -->
-        <script src="./bundle.js"></script>
+        <!-- The game -->
+        <script src="https://cdn.jsdelivr.net/npm/rot-js@2/dist/rot.js"></script>
+        <script src="js/index.js" type="module"></script>
         <!-- Minimal CSS -->
         <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+        <link rel="stylesheet" href="css/index.css" type="text/css">
         
     </head>
-    <body>
+    <body onload="loadGame()">
         <div id="header">
             <h1>$GAME_TITLE</h1>
             <small>A 7DRL game about automation by @brad_io</small>
@@ -29,6 +31,10 @@
         <div id="mainContentWrapper">
             <!-- The game is rendered in this -->
             <div id="gameCanvas"></div>
+            <div id="sidebar">
+                <label for="frameCounter">Frame: </label><span id="frameTimer">0</span>
+                <label for="coalCounter">Coal: </label><span id="coalCounter">0</span>
+            </div>
         </div>
     </body>
 </html>
