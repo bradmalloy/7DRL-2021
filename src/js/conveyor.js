@@ -39,8 +39,23 @@ class Conveyor extends Building {
         } else if (outputDirection == "west") {
             this._outKey = `${x - 1},${y}`;
         } else {
-            console.error("Bad inDir!");
+            console.error("Bad outputDirection!");
         }
+        // input direction matters for calculating priority
+        // this assumes that this is a straight conveyor belt
+        if (outputDirection == "north") {
+            this._inKey = `${x},${y + 1}`;
+        } else if (outputDirection == "south") {
+            this._inKey = `${x},${y - 1}`;
+        } else if (outputDirection == "east") {
+            this._inKey = `${x - 1},${y}`;
+        } else if (outputDirection == "west") {
+            this._inKey = `${x + 1},${y}`;
+        } else {
+            console.error("Bad outputDirection!");
+        }
+        // when any conveyor is placed, all belts should calculate their priority
+        this.calculatePriorityAndUpdateWholeBelt();
         // conveyors start active
         this.start();
     }
@@ -74,13 +89,51 @@ class Conveyor extends Building {
     }
 
     /**
+     * Look at our output tile - if it contains a conveyor, look at the output's
+     * output. Continue this until we find the last conveyor, and count how many
+     * steps we are away from the end. Our priority level starts at 100, and goes
+     * up by 1 for each step.
+     * 
+     * ex: A -> B -> C -> D
+     * D: 100, C: 101, B: 102, A: 103
+     */
+    calculatePriority() {
+        var stepsFromEnd = 0;
+        var outTile = Game.map[this._outKey];
+        while (outTile?.actor instanceof Conveyor) {
+            stepsFromEnd += 1;
+            //console.debug(`At ${outTile.actor.getPositionKey()}, checking ${outTile.actor._outKey}`);
+            outTile = Game.map[outTile.actor._outKey];
+        }
+        console.debug(`${this.getPositionKey()} is ${stepsFromEnd} steps from the end of the belt.`)
+        return 100 + stepsFromEnd;
+    }
+
+    /**
+     * When a conveyor belt is placed, it needs to know where it is in the
+     * line in order to set its update() priority. This causes the whole 
+     * belt segment to shift.
+     */
+    calculatePriorityAndUpdateWholeBelt() {
+        // First, update us
+        this.calculatePriority();
+        // Then walk the line BACKWARDS and have each belt update itself
+        var inTile = Game.map[this._inKey];
+        while (inTile?.actor instanceof Conveyor) {
+            // update the tile
+            inTile.actor.calculatePriority();
+            // find the next one
+            inTile = Game.map[inTile.actor._inKey];
+        }
+    }
+
+    /**
      * Unlike other buildings, conveyor belts should show their own tile,
      * with a tile for the resource overlaid on top.
      * This is accomplished by drawing an array:
      * http://ondras.github.io/rot.js/manual/#tiles
      */
     represent() {
-        console.log("Conveyor belt drawing!");
         if (!this.inventory || !this.inventory.hasItems()) {
             // Empty conveyor - just one tile
             return this._repr;

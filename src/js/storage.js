@@ -13,6 +13,7 @@ class Box extends Building {
         // optimization - don't update the DOM 
         // unless we have something novel to say
         this.lastUiUpdate = null;
+        this._priority = 1; // see realTimeEngine.update()
     }
 
     /**

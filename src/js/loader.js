@@ -39,6 +39,7 @@ class Loader extends Building {
         } else {
             console.error("Bad inDir!");
         }
+        this._priority = 2; // see realTimeEngine.update()
     }
 
     act() {

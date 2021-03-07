@@ -32,7 +32,6 @@ class Inventory {
             // ex: maxSize 1 - only accept if we have 0
             if (existingAmount < this._maxSize) {
                 this._bag[itemType] += 1;
-                console.debug(`[Inventory] ${itemType}: ${this._bag[itemType]}`);
                 return true;
             } else {
                 return false;

@@ -14,6 +14,7 @@ class Building {
         this._y = y;
         this._repr = repr ? repr : "?";
         this._running = false;
+        this._priority = null;
         Game.map[this.getPositionKey()].addActor(this);
         Game.engine.add(this);
     }

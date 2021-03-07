@@ -15,6 +15,7 @@ class Extractor extends Building {
         this.delay = delay ? delay : defaultExtractorDelay;
         this.ticksUntilPull = this.delay;
         this.inventory = new Inventory(25);
+        this._priority = 1; // see realTimeEngine.update()
     }
 
     act() {
