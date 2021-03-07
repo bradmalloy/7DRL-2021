@@ -29,12 +29,13 @@ class RealTimeEngine {
         }
 
         this.unlock = this.unlock.bind(this);
-        this.doGameTick = this.update.bind(this);
-        this.doDisplayTick = this.render.bind(this);
+        this.update = this.update.bind(this);
+        this.render = this.render.bind(this);
         this.add = this.add.bind(this);
         this.remove = this.remove.bind(this);
         this.start = this.start.bind(this);
         this.lock = this.lock.bind(this);
+        this.updateAndRender = this.updateAndRender.bind(this);
     }
     
     add(item) {
@@ -85,16 +86,23 @@ class RealTimeEngine {
         Game._drawWholeMap();
     }
 
+    updateAndRender() {
+        this.update();
+        this.render();
+    }
+
 	/**
 	 * Resume execution (paused by a previous lock)
 	 */
 	unlock() {
         console.debug("Running the engine!");
 		if (!this._lock) { throw new Error("Cannot unlock unlocked engine"); }
-		this._lock--;
+        this._lock--;
+        
+        this._mainInterval = window.setInterval(this.updateAndRender, this._gameTickDelay);
 
-        this._displayTimer = window.setInterval(this.render, this._refreshDelay);
-        this._gameTickTimer = window.setInterval(this.update, this._gameTickDelay);
+        //this._displayTimer = window.setInterval(this.render, this._refreshDelay);
+        //this._gameTickTimer = window.setInterval(this.update, this._gameTickDelay);
 
 		return this;
 	}
