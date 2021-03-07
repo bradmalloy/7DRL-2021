@@ -19,7 +19,7 @@ var options = {
     tileSet: tileSet,
     tileMap: {
         "?": [1276, 1277],      // question mark
-        "coal": [1276, 1277],   // temp question mark
+        "coal": [522, 54],   // temp question mark
         ".": [418, 54],         // ground
         "e": [1276, 470],       // extractor
         "Ln": [626, 964],       // Loader, north input
@@ -68,15 +68,21 @@ const Game = {
         // loader moves it from 5,5 to 7,5
         // conveyor pushes it's own inventory east
         let extractor = new Extractor(5,5);
-        let loadW = new Loader(6,5,"west");
-        let conveyor1 = new Conveyor(7, 5, "west");
-        let conveyor2 = new Conveyor(8, 5, "west");
-        let conveyor3 = new Conveyor(9, 5, "west");
-        let boxLoader = new Loader(10, 5, "west");
-        let box1 = new Box(11, 5);
+        let loadW = new Loader(6,5,"west"); // input direction
+        let conveyor1 = new Conveyor(7, 5, "east"); // output direction
+        let conveyor2 = new Conveyor(8, 5, "east");
+        let conveyor3 = new Conveyor(9, 5, "east");
+        let conveyor4 = new Conveyor(10, 5, "east");
+        let conveyor5 = new Conveyor(11, 5, "east");
+        let conveyor6 = new Conveyor(12, 5, "east");
+        let conveyor7 = new Conveyor(13, 5, "east");
+        let conveyor8 = new Conveyor(14, 5, "east");
+        let boxLoader = new Loader(15, 5, "west");
+        let box1 = new Box(16, 5);
 
         extractor.start();
         loadW.start();
+        boxLoader.start();
 
         const clock = new Clock();
         
@@ -94,8 +100,8 @@ const Game = {
             var parts = key.split(",");
             var x = parseInt(parts[0]);
             var y = parseInt(parts[1]);
-            let charToDisplay = this.map[key].display();
-            this.display.draw(x, y, charToDisplay);
+            let toDisplay = this.map[key].display();
+            this.display.draw(x, y, toDisplay);
         }
     }
 }

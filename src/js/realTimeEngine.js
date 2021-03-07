@@ -29,8 +29,8 @@ class RealTimeEngine {
         }
 
         this.unlock = this.unlock.bind(this);
-        this.doGameTick = this.doGameTick.bind(this);
-        this.doDisplayTick = this.doDisplayTick.bind(this);
+        this.doGameTick = this.update.bind(this);
+        this.doDisplayTick = this.render.bind(this);
         this.add = this.add.bind(this);
         this.remove = this.remove.bind(this);
         this.start = this.start.bind(this);
@@ -67,7 +67,7 @@ class RealTimeEngine {
     /**
      * Run through all the items in the _loop once.
      */
-    doGameTick() {
+    update() {
         for (let i = 0; i < this._loop.length; i++) {
             let thisItem = this._loop[i];
             if (thisItem && thisItem.act != null) {
@@ -75,13 +75,13 @@ class RealTimeEngine {
             } else {
                 console.warn("Item didn't have an act() method.");
             }
-        }
+        }  
     }
 
     /**
      * Draw everything on the amp.
      */
-    doDisplayTick() {
+    render() {
         Game._drawWholeMap();
     }
 
@@ -93,8 +93,8 @@ class RealTimeEngine {
 		if (!this._lock) { throw new Error("Cannot unlock unlocked engine"); }
 		this._lock--;
 
-        this._gameTickTimer = window.setInterval(this.doGameTick, this._gameTickDelay);
-        this._displayTimer = window.setInterval(this.doDisplayTick, this._refreshDelay);
+        this._displayTimer = window.setInterval(this.render, this._refreshDelay);
+        this._gameTickTimer = window.setInterval(this.update, this._gameTickDelay);
 
 		return this;
 	}

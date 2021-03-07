@@ -70,6 +70,14 @@ class Inventory {
         return false;
     }
 
+    count(itemType) {
+        if (!itemType) {
+            console.error("Invalid itemType for count()");
+        }
+        let amount = this._bag[itemType];
+        return amount ? amount : 0;
+    }
+
     getItemTypes() {
         return Object.keys(this._bag);
     }
