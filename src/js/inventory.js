@@ -10,6 +10,12 @@ class Inventory {
     constructor(maxSize) {
         this._maxSize = maxSize ? maxSize : defaultMaxSize;
         this._bag = {};
+
+        this.add = this.add.bind(this);
+        this.remove = this.remove.bind(this);
+        this.hasItems = this.hasItems.bind(this);
+        this.getItemTypes = this.getItemTypes.bind(this);
+        this.getRandomItemType = this.getRandomItemType.bind(this);
     }
 
     /**
@@ -76,7 +82,7 @@ class Inventory {
     getRandomItemType() {
         let keysLength = this.getItemTypes().length;
         let index = Math.floor(Math.random() * Math.floor(keysLength));
-        return this.getItemTypes[index];
+        return this.getItemTypes()[index];
     }
 }
 

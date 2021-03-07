@@ -45,7 +45,8 @@ class Loader extends Building {
         if (this._running) {
             // check to see if the "in" tile has an inventory
             let inTile = Game.map[this._inKey];
-            if (inTile.actor && inTile.actor.inventory && inTile.actor.inventory.hasItems()) {
+            let building = inTile.actor;
+            if (building && building.inventory && building.inventory.hasItems()) {
                 // if it does, take out whatever's there and push it out the other side
                 let typeToTake = inTile.actor.inventory.getRandomItemType();
                 let result = inTile.actor.inventory.remove(typeToTake);

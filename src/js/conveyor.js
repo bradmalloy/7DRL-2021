@@ -14,18 +14,6 @@ class Conveyor extends Building {
         let repr = facingTile[inDir];
         super(x, y, repr);
         this.inventory = new Inventory(1);
-        // set our input tile
-        if (inDir == "north") {
-            this._inKey = `${x},${y - 1}`;
-        } else if (inDir == "south") {
-            this._inKey = `${x},${y + 1}`;
-        } else if (inDir == "east") {
-            this._inKey = `${x + 1},${y}`;
-        } else if (inDir == "west") {
-            this._inKey = `${x - 1},${y}`;
-        } else {
-            console.error("Bad inDir!");
-        }
         // set our output tile
         if (inDir == "north") {
             this._outKey = `${x},${y + 1}`;

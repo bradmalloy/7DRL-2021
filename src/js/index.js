@@ -63,13 +63,13 @@ const Game = {
             }
         }
 
-        // just to test, let's put an extractor in there
+        // just to test, let's put a test line in there
+        // extractor pulls up coal
+        // loader moves it from 5,5 to 7,5
+        // conveyor pushes it's own inventory east
         let extractor = new Extractor(5,5);
-        // let loadN = new Loader(5, 6, "north");
-        // let loadE = new Loader(4,5,"east");
-        // let loadS = new Loader(5, 4, "south");
         let loadW = new Loader(6,5,"west");
-        let conveyor1 = new Conveyor(7,5, "west");
+        let conveyor1 = new Conveyor(7, 5, "west");
         let conveyor2 = new Conveyor(8, 5, "west");
         let conveyor3 = new Conveyor(9, 5, "west");
         let boxLoader = new Loader(10, 5, "west");
