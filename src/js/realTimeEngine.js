@@ -67,6 +67,21 @@ class RealTimeEngine {
     
     /**
      * Run through all the items in the _loop once.
+     * We need to call each item according to an order of operations:
+     * 1. Extractors [prio 1]
+     * 2. Resource consumers (Forge, Assemblers, etc) [prio 2]
+     * 3. Loaders [prio 3]
+     * 4. Conveyor belts, *in reverse order* [prio 100-999]
+     * 
+     * This means each actor needs to have a priority value, and we need to 
+     * execute the loop in that order. It's okay for buildings to share values,
+     * it just means that within that priority, order doesn't matter. For example,
+     * if we have 5 extractors, it doesn't matter which one goes first.
+     * 
+     * For conveyor belts (a group within which order matters), we'll use values 100 to
+     * 999. The last segment of a given conveyor belt will have value 100, and each 
+     * segment after that until the first will have increasing numbers. As long as different
+     * belts aren't connected, it's also ok if they share priority values.
      */
     update() {
         for (let i = 0; i < this._loop.length; i++) {
