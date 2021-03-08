@@ -7,6 +7,11 @@ const config = {
                 baseChance: 0.3,
                 generations: 2,
                 minTiles: 15
+            },
+            coal: {
+                baseChance: 0.15,
+                generations: 1,
+                minTiles: 10
             }
         }
     },
@@ -15,4 +20,4 @@ const config = {
     }
 }
 
-export { Config };
+export { config };

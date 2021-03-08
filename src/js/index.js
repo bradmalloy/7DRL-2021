@@ -21,6 +21,7 @@ var options = {
         "coal": [522, 54],   // temp question mark
         ".": [418, 54],         // empty ground
         "1": [366, 54],                // iron ground
+        "2": [522, 54],                 // coal ground
         "e": [1276, 470],       // extractor
         "Ln": [626, 964],       // Loader, north input
         "Ls": [626, 938],       // Loader, south input
@@ -31,8 +32,8 @@ var options = {
         "b": [964, 1068],        // Box, small
         "@": [80, 1224]          // Player cursor
     },
-    width: 20,
-    height: 20
+    width: config.map.width,
+    height: config.map.height
 }
 
 var gameWrapper = document.getElementById("gameCanvas");
@@ -139,7 +140,30 @@ const Game = {
                 }
             }
         }
-        
+
+        // Same for coal
+        var sumCoalTiles = 0;
+        while (sumCoalTiles <= config.map.resources.coal.minTiles) {
+            var coalMap = new ROT.Map.Cellular(width, height, { connected: true });
+            coalMap.randomize(config.map.resources.coal.baseChance);
+            for (let i = 0; i< config.map.resources.coal.generations; i++) {
+                coalMap.create();
+            }
+            sumCoalTiles = coalMap._map.flat().reduce(doSum, 0);
+        }
+
+        // Change tiles to "coal", but only if they're empty!
+        for (let x = 0; x < width; x++) {
+            for (let y = 0; y < height; y++) {
+                if (coalMap._map[x][y] == 1) {
+                    let key = `${x},${y}`
+                    let tile = this.map[key];
+                    if (tile.tileType == "empty") {
+                        tile.setType("coal");
+                    }
+                }
+            }
+        }
     },
 
     _fillMapWithTestData() {

@@ -2,7 +2,8 @@ import { Game } from './index.js';
 
 const tileTypeMap = {
     "empty": ".",
-    "iron": "1"
+    "iron": "1",
+    "coal": "2"
 }
 
 class Tile {
