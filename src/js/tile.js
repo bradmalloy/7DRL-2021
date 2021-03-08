@@ -1,5 +1,10 @@
 import { Game } from './index.js';
 
+const tileTypeMap = {
+    "empty": ".",
+    "iron": "1"
+}
+
 class Tile {
     constructor(tileType, x, y) {
         this.tileType = tileType;
@@ -8,6 +13,9 @@ class Tile {
 
         this.item = null;
         this.actor = null;
+    }
+    setType(tileType) {
+        this.tileType = tileType;
     }
     isEmpty() {
         return this.actor == null;
@@ -29,7 +37,7 @@ class Tile {
         Game.display.draw(this._x, this._y, this.display());
     }
     display() {
-        let output = ".";
+        let output = tileTypeMap[this.tileType];
         if (this.actor) {
             output = this.actor.represent();
         }

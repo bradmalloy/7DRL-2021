@@ -5,8 +5,7 @@ import { Box } from "./storage.js";
 import { RealTimeEngine } from "./realTimeEngine.js";
 import { Tile } from "./tile.js";
 import { Player } from "./player.js";
-
-const frameDelay = 250; // in millisecond delay
+import { config } from "./config.js";
 
 var tileSet = document.createElement("img");
 tileSet.src = "urizen-700.png";
@@ -20,7 +19,8 @@ var options = {
     tileMap: {
         "?": [1276, 1277],      // question mark
         "coal": [522, 54],   // temp question mark
-        ".": [418, 54],         // ground
+        ".": [418, 54],         // empty ground
+        "1": [366, 54],                // iron ground
         "e": [1276, 470],       // extractor
         "Ln": [626, 964],       // Loader, north input
         "Ls": [626, 938],       // Loader, south input
@@ -39,6 +39,8 @@ var gameWrapper = document.getElementById("gameCanvas");
 var frameTimer = document.getElementById("frameTimer");
 var frame = 0;
 
+const doSum = (accumulator, currentValue) => accumulator + currentValue;
+
 class Clock {
     act() {
         frameTimer.innerText = "" + frame;
@@ -52,13 +54,14 @@ const Game = {
     player: null,
     map: {},
     init: function() {
-        this.engine = new RealTimeEngine(frameDelay);
+        this.engine = new RealTimeEngine(config.game.frameDelay);
         this.map = {};
         this.display = new ROT.Display(options);
         gameWrapper.appendChild(this.display.getContainer());
 
-        // Draw an empty map
-        this._createMap();
+        // Draw the map & fill with resources
+        this._generateMap();
+
         //this._fillMapWithTestData();
 
         // Frame counter
@@ -95,14 +98,48 @@ const Game = {
         this.display.draw(this.player._x, this.player._y, drawArray);
     },
 
-    _createMap() {
-        for (let x = 0; x < this.display.getOptions().width; x++) {
-            for (let y = 0; y < this.display.getOptions().height; y++) {
+    /**
+     * Draw a map, then fill it with resources.
+     * Iron, coal, and copper.
+     */
+    _generateMap() {
+        // Generate all the empty tiles
+        var width = this.display.getOptions().width;
+        var height = this.display.getOptions().height;
+        for (let x = 0; x < width; x++) {
+            for (let y = 0; y < height; y++) {
                 let tile = new Tile("empty", x, y);
                 let key = tile.getPositionKey();
                 this.map[key] = tile;
             }
         }
+
+        // Next, use celluar automata to lay down the first layer of resources
+        // but make sure they meet the minimum bar
+        var sumIronTiles = 0;
+        while (sumIronTiles <= config.map.resources.iron.minTiles) {
+            var ironMap = new ROT.Map.Cellular(width, height, { connected: true});
+            // % chance to be iron
+            ironMap.randomize(config.map.resources.iron.baseChance);
+            // iterations smooth out and connect live tiles
+            for (let i = 0; i < config.map.resources.iron.generations; i++) {
+                ironMap.create();
+            }
+            // Check to ensure that we have a minimum number of iron tiles
+            sumIronTiles = ironMap._map.flat().reduce(doSum, 0);
+        }
+
+        // Go through the map and change the tiles we touch to type "iron"
+        for (let x = 0; x < width; x++) {
+            for (let y = 0; y < height; y++) {
+                if (ironMap._map[x][y] == 1) {
+                    let key = `${x},${y}`
+                    let tile = this.map[key];
+                    tile.setType("iron");
+                }
+            }
+        }
+        
     },
 
     _fillMapWithTestData() {
