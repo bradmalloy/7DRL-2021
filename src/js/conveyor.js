@@ -80,7 +80,7 @@ class Conveyor extends Building {
                     if (result) {
                         // If we succeeded, remove our copy of it
                         this.inventory.remove(typeToMove);
-                        console.debug(`Conveyor [${this.getPositionKey()}] moved item to ${this._outKey}`);
+                        //console.debug(`Conveyor [${this.getPositionKey()}] moved item to ${this._outKey}`);
                     }
                 }
             }

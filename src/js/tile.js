@@ -8,7 +8,6 @@ class Tile {
 
         this.item = null;
         this.actor = null;
-        this.walkable = true;
     }
     isEmpty() {
         return this.actor == null;
@@ -31,7 +30,6 @@ class Tile {
     }
     display() {
         let output = ".";
-        // Items are less important than actors
         if (this.actor) {
             output = this.actor.represent();
         }

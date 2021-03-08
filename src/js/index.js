@@ -4,6 +4,7 @@ import { Conveyor } from "./conveyor.js";
 import { Box } from "./storage.js";
 import { RealTimeEngine } from "./realTimeEngine.js";
 import { Tile } from "./tile.js";
+import { Player } from "./player.js";
 
 const frameDelay = 500; // in millisecond delay
 const defaultRefreshRate = 10; // in FPS
@@ -28,7 +29,8 @@ var options = {
         "Le": [574, 938],       // Loader, east input
         "cv": [652, 886],       // Conveyor, vertical
         "ch": [678, 886],       // Conveyor, horizontal
-        "b": [964, 1068]        // Box, small
+        "b": [964, 1068],        // Box, small
+        "@": [80, 1224]          // Player cursor
     },
     width: 20,
     height: 20
@@ -48,6 +50,7 @@ class Clock {
 const Game = {
     display: null,
     engine: null,
+    player: null,
     map: {},
     init: function() {
         this.engine = new RealTimeEngine(frameDelay, defaultRefreshRate);
@@ -55,6 +58,41 @@ const Game = {
         this.display = new ROT.Display(options);
         gameWrapper.appendChild(this.display.getContainer());
 
+        // Draw an empty map
+        this._createMap();
+        this._fillMapWithTestData();
+
+        // Create a player
+        this.player = new Player(1, 1);
+
+        // Start the game!
+        this.engine.start();
+
+        // Do an inital draw so we don't flash the player
+        this._drawWholeMap();
+
+        console.info("Game init() finished!")
+    },
+
+    _drawWholeMap: function() {
+        this.display.clear();
+        for (let key in this.map) {
+            var parts = key.split(",");
+            var x = parseInt(parts[0]);
+            var y = parseInt(parts[1]);
+            let toDisplay = this.map[key].display();
+            this.display.draw(x, y, toDisplay);
+        }
+        this.drawPlayer();
+    },
+
+    drawPlayer: function() {
+        let playerPos = this.map[this.player.getPositionKey()];
+        let drawArray = [playerPos.display(), this.player.represent()].flat();
+        this.display.draw(this.player._x, this.player._y, drawArray);
+    },
+
+    _createMap() {
         for (let x = 0; x < this.display.getOptions().width; x++) {
             for (let y = 0; y < this.display.getOptions().height; y++) {
                 let tile = new Tile("empty", x, y);
@@ -62,7 +100,9 @@ const Game = {
                 this.map[key] = tile;
             }
         }
+    },
 
+    _fillMapWithTestData() {
         // just to test, let's put a test line in there
         // extractor pulls up coal
         // loader moves it from 5,5 to 7,5
@@ -92,22 +132,6 @@ const Game = {
         const clock = new Clock();
         
         this.engine.add(clock);
-        this.engine.start();
-
-        this._drawWholeMap();
-
-        console.info("Game init() finished!")
-    },
-
-    _drawWholeMap: function() {
-        this.display.clear();
-        for (let key in this.map) {
-            var parts = key.split(",");
-            var x = parseInt(parts[0]);
-            var y = parseInt(parts[1]);
-            let toDisplay = this.map[key].display();
-            this.display.draw(x, y, toDisplay);
-        }
     }
 }
 
