@@ -12,20 +12,14 @@ class RealTimeEngine {
      * Create a new RealTimeEngine with a given simulation rate and
      * framerate.
      * @param {number} gameTickDelay delay between game ticks, in milliseconds
-     * @param {number} refreshRate number of times to draw display, per second
      */
-	constructor(gameTickDelay, refreshRate) {
+	constructor(gameTickDelay) {
         this._lock = 1;
         this._loop = [];
 
         this._gameTickTimer = null; // setInterval on start()
         if (gameTickDelay) {
             this._gameTickDelay = gameTickDelay;
-        }
-
-        this._displayTimer = null; // setInterval on start()
-        if (refreshRate) {
-            this._refreshDelay = calculateDelay(refreshRate);
         }
 
         this.unlock = this.unlock.bind(this);
@@ -126,9 +120,6 @@ class RealTimeEngine {
         this._lock--;
         
         this._mainInterval = window.setInterval(this.updateAndRender, this._gameTickDelay);
-
-        //this._displayTimer = window.setInterval(this.render, this._refreshDelay);
-        //this._gameTickTimer = window.setInterval(this.update, this._gameTickDelay);
 
 		return this;
 	}

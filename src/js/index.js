@@ -7,7 +7,6 @@ import { Tile } from "./tile.js";
 import { Player } from "./player.js";
 
 const frameDelay = 250; // in millisecond delay
-const defaultRefreshRate = 10; // in FPS
 
 var tileSet = document.createElement("img");
 tileSet.src = "urizen-700.png";
@@ -53,7 +52,7 @@ const Game = {
     player: null,
     map: {},
     init: function() {
-        this.engine = new RealTimeEngine(frameDelay, defaultRefreshRate);
+        this.engine = new RealTimeEngine(frameDelay);
         this.map = {};
         this.display = new ROT.Display(options);
         gameWrapper.appendChild(this.display.getContainer());
