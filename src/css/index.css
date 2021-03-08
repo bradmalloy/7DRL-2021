@@ -17,3 +17,15 @@ body {
     margin-left: 1em;
     order: 2;
 }
+
+/* Starts hidden, displayed when player presses keybind. */
+#buildMenu {
+    display: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.buildMenuItem span {
+    font-weight: bold;
+}

@@ -80,7 +80,6 @@ class Conveyor extends Building {
                     if (result) {
                         // If we succeeded, remove our copy of it
                         this.inventory.remove(typeToMove);
-                        //console.debug(`Conveyor [${this.getPositionKey()}] moved item to ${this._outKey}`);
                     }
                 }
             }
@@ -89,21 +88,6 @@ class Conveyor extends Building {
             // this means we run down the counter, even when off
             // so when turning back on, we'll kick on immediately
             this.ticksUntilPull -= 1;
-        }
-        let itemType = this.inventory.getRandomItemType();
-        if (!itemType) {
-            return;
-        }
-        let amount = this.inventory.count(itemType);
-        let uiText = `[${this.getPositionKey()}] ${itemType}: ${amount}`;
-        let maybeListItem = document.getElementById(`beltCounter-${this.getPositionKey()}`);
-        if (maybeListItem) {
-            maybeListItem.innerText = uiText;
-        } else {
-            let newNode = document.createElement("li");
-            newNode.id = `beltCounter-${this.getPositionKey()}`;
-            newNode.innerText = uiText;
-            beltListUiCounter.appendChild(newNode);
         }
     }
 

@@ -6,7 +6,7 @@ import { RealTimeEngine } from "./realTimeEngine.js";
 import { Tile } from "./tile.js";
 import { Player } from "./player.js";
 
-const frameDelay = 500; // in millisecond delay
+const frameDelay = 250; // in millisecond delay
 const defaultRefreshRate = 10; // in FPS
 
 var tileSet = document.createElement("img");
@@ -60,7 +60,11 @@ const Game = {
 
         // Draw an empty map
         this._createMap();
-        this._fillMapWithTestData();
+        //this._fillMapWithTestData();
+
+        // Frame counter
+        const clock = new Clock();
+        this.engine.add(clock);
 
         // Create a player
         this.player = new Player(1, 1);
@@ -128,10 +132,6 @@ const Game = {
         loadW.start();
         boxLoader.start();
         boxUnloader.start();
-
-        const clock = new Clock();
-        
-        this.engine.add(clock);
     }
 }
 

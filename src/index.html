@@ -34,11 +34,37 @@
             <div id="sidebar">
                 <label for="frameCounter">Frame: </label><span id="frameTimer">0</span>
                 <label for="extractorCounter">Extractor: </label><span id="extractorCounter">0</span>
-                <label for="beltCounters">Belts: </label>
-                    <ul id="beltCounters">
-                        <!-- belts will put their inventories here -->
-                    </ul>
                 <label for="testBoxCounter">Box: </label><span id="testBoxCounter">0</span>
+            </div>
+        </div>
+        <div id="buildMenu">
+            <div class="buildMenuItem">
+                <span>Miner</span>
+                <p>Extracts resources from the ground. Build with "m"</p>
+            </div>
+            <div class="buildMenuItem">
+                <span>Loader</span>
+                <p>
+                    Moves resources from A to B. Select with "l", then choose an
+                    input facing with "n", "s", "e", or "w". The output is always
+                    the opposite side. Press "Esc" to cancel building.
+                </p>
+            </div>
+            <div class="buildMenuItem">
+                <span>Conveyor Belt</span>
+                <p>
+                    Slides resources in one direction. Select with "c", then choose
+                    an <strong>output</strong> direction with "n", "s", "e", or "w".
+                    Belts don't have an input port - they can only receive items from
+                    other belts or loaders. Press "Esc" to cancel building.
+                </p>
+            </div>
+            <div class="buildMenuItem">
+                <span>Small Box</span>
+                <p>
+                    Stores resources. Build with "s". Can accept input from any 
+                    direction, and can be accessed from any direction.
+                </p>
             </div>
         </div>
     </body>
