@@ -79,10 +79,15 @@ const Game = {
         let conveyor8 = new Conveyor(14, 5, "east");
         let boxLoader = new Loader(15, 5, "west");
         let box1 = new Box(16, 5);
+        let boxUnloader = new Loader(16, 6, "north");
+        let vConvey1 = new Conveyor(16, 7, "south");
+        let vConvey2 = new Conveyor(16, 8, "south");
+        let vConvey3 = new Conveyor(16, 9, "south");
 
         extractor.start();
         loadW.start();
         boxLoader.start();
+        boxUnloader.start();
 
         const clock = new Clock();
         
