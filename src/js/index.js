@@ -5,7 +5,7 @@ import { Box } from "./storage.js";
 import { RealTimeEngine } from "./realTimeEngine.js";
 import { Tile } from "./tile.js";
 
-const frameDelay = 1000; // in millisecond delay
+const frameDelay = 500; // in millisecond delay
 const defaultRefreshRate = 10; // in FPS
 
 var tileSet = document.createElement("img");
@@ -67,7 +67,7 @@ const Game = {
         // extractor pulls up coal
         // loader moves it from 5,5 to 7,5
         // conveyor pushes it's own inventory east
-        let extractor = new Extractor(5,5);
+        let extractor = new Extractor(5, 5, 10);
         let loadW = new Loader(6,5,"west"); // input direction
         let conveyor1 = new Conveyor(7, 5, "east"); // output direction
         let conveyor2 = new Conveyor(8, 5, "east");

@@ -2,7 +2,8 @@ import { Inventory } from "./inventory.js";
 import { Building } from "./building.js";
 import { Game } from "./index.js";
 
-const defaultConveyorDelay = 5;
+const defaultConveyorDelay = 0;
+const beltListUiCounter = document.getElementById("beltCounters");
 
 const facingTile = {
     "north": "cv",
@@ -69,15 +70,18 @@ class Conveyor extends Building {
     act() {
         if (this._running && this.ticksUntilPull == 0) {
             let outTile = Game.map[this._outKey];
-            if (outTile.actor && outTile.actor.inventory) {
-                // In this case, always moving one item
-                // Remove it from us
+            // Check if the output can accept an item
+            if (outTile?.actor?.inventory?.canAcceptItem()) {
+                // If so, figure out our item type
                 let typeToMove = this.inventory.getRandomItemType();
                 // Try to add it to our outTile
-                let result = outTile.actor.inventory.add(typeToMove);
-                if (result) {
-                    // If we succeeded, remove our copy of it
-                    this.inventory.remove(typeToMove);
+                if (typeToMove) {
+                    let result = outTile.actor.inventory.add(typeToMove);
+                    if (result) {
+                        // If we succeeded, remove our copy of it
+                        this.inventory.remove(typeToMove);
+                        console.debug(`Conveyor [${this.getPositionKey()}] moved item to ${this._outKey}`);
+                    }
                 }
             }
             // If outTile is full or doesn't have an inventory, do nothing
@@ -85,7 +89,22 @@ class Conveyor extends Building {
             // this means we run down the counter, even when off
             // so when turning back on, we'll kick on immediately
             this.ticksUntilPull -= 1;
-        } 
+        }
+        let itemType = this.inventory.getRandomItemType();
+        if (!itemType) {
+            return;
+        }
+        let amount = this.inventory.count(itemType);
+        let uiText = `[${this.getPositionKey()}] ${itemType}: ${amount}`;
+        let maybeListItem = document.getElementById(`beltCounter-${this.getPositionKey()}`);
+        if (maybeListItem) {
+            maybeListItem.innerText = uiText;
+        } else {
+            let newNode = document.createElement("li");
+            newNode.id = `beltCounter-${this.getPositionKey()}`;
+            newNode.innerText = uiText;
+            beltListUiCounter.appendChild(newNode);
+        }
     }
 
     /**
@@ -97,7 +116,7 @@ class Conveyor extends Building {
      * ex: A -> B -> C -> D
      * D: 100, C: 101, B: 102, A: 103
      */
-    calculatePriority() {
+    calculateAndSetPriority() {
         var stepsFromEnd = 0;
         var outTile = Game.map[this._outKey];
         while (outTile?.actor instanceof Conveyor) {
@@ -106,7 +125,7 @@ class Conveyor extends Building {
             outTile = Game.map[outTile.actor._outKey];
         }
         console.debug(`${this.getPositionKey()} is ${stepsFromEnd} steps from the end of the belt.`)
-        return 100 + stepsFromEnd;
+        this._priority = 100 + stepsFromEnd;
     }
 
     /**
@@ -116,14 +135,21 @@ class Conveyor extends Building {
      */
     calculatePriorityAndUpdateWholeBelt() {
         // First, update us
-        this.calculatePriority();
+        this.calculateAndSetPriority();
         // Then walk the line BACKWARDS and have each belt update itself
         var inTile = Game.map[this._inKey];
         while (inTile?.actor instanceof Conveyor) {
             // update the tile
-            inTile.actor.calculatePriority();
+            inTile.actor.calculateAndSetPriority();
             // find the next one
             inTile = Game.map[inTile.actor._inKey];
+        }
+        // In case this belt connects two segments (on the in and out side)
+        // also check the out-side
+        var outTile = Game.map[this._outKey];
+        while (outTile?.actor instanceof Conveyor) {
+            outTile.actor.calculateAndSetPriority();
+            outTile = Game.map[outTile.actor._outKey];
         }
     }
 
@@ -139,7 +165,6 @@ class Conveyor extends Building {
             return this._repr;
         } else if (this.inventory && this.inventory.hasItems()) {
             // Has an item - stack the item tile on top
-            console.info(this.inventory.getRandomItemType());
             return [this._repr, this.inventory.getRandomItemType()];
         }
     }

@@ -1,9 +1,12 @@
+body {
+    max-width: 50em;
+}
+
 #mainContentWrapper {
     display: flex;
     flex-wrap: nowrap;
     justify-content: center;
     align-items: stretch;
-    width: 90%;
 }
 
 #gameCanvas {

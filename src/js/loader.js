@@ -14,7 +14,6 @@ class Loader extends Building {
         // Pick the tile based on facing
         let repr = facingTile[inDir];
         super(x, y, repr);
-        this.inventory = new Inventory(1);
         // inDir can be "north", "south", "east", "west"
         if (inDir == "north") {
             this._inKey = `${x},${y - 1}`;
@@ -44,23 +43,19 @@ class Loader extends Building {
 
     act() {
         if (this._running) {
-            // check to see if the "in" tile has an inventory
+            // Check to see if our input and output have items and can accept items
             let inTile = Game.map[this._inKey];
-            let building = inTile.actor;
-            if (building && building.inventory && building.inventory.hasItems()) {
-                // if it does, take out whatever's there and push it out the other side
-                let typeToTake = inTile.actor.inventory.getRandomItemType();
-                let result = inTile.actor.inventory.remove(typeToTake);
-                if (result) {
-                    this.inventory.add(typeToTake);
-                }
-            }
             let outTile = Game.map[this._outKey];
-            if (this.inventory.hasItems() && outTile.actor && outTile.actor.inventory) {
-                let typeToGive = this.inventory.getRandomItemType();
-                let result = outTile.actor.inventory.add(typeToGive);
-                if (result) {
-                    this.inventory.remove(typeToGive);
+            if (inTile?.actor?.inventory.hasItems() && outTile?.actor?.inventory.canAcceptItem()) {
+                // If so, take out whatever's there and push it out the other side
+                let typeToMove = inTile.actor.inventory.getRandomItemType();
+                let successfullyRemovedItem = inTile.actor.inventory.remove(typeToMove);
+                if (successfullyRemovedItem) {
+                    let gaveItem = outTile.actor.inventory.add(typeToMove);
+                    console.debug(`Loader moved an item from [${this._inKey}] to [${this._outKey}]`);
+                    if (!gaveItem) {
+                        console.error(`Loader at ${this.getPositionKey()} deleted an item 😭`);
+                    }
                 }
             }
         }

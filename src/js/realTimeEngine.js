@@ -3,7 +3,7 @@ import { Game } from "./index.js";
 class RealTimeEngine {
 	_loop = [];
     _lock = 0;
-    _gameTickDelay = 100; // game updates/second
+    _gameTickDelay = 100; // delay in ms between updates
     _gameTickTimer = null;
     _refreshDelay = 100; // 10 FPS
     _refreshTimer = null;
@@ -36,6 +36,7 @@ class RealTimeEngine {
         this.start = this.start.bind(this);
         this.lock = this.lock.bind(this);
         this.updateAndRender = this.updateAndRender.bind(this);
+        this.getSortedLoop = this.getSortedLoop.bind(this);
     }
     
     add(item) {
@@ -84,14 +85,24 @@ class RealTimeEngine {
      * belts aren't connected, it's also ok if they share priority values.
      */
     update() {
-        for (let i = 0; i < this._loop.length; i++) {
-            let thisItem = this._loop[i];
+        var prioritySortedLoop = this.getSortedLoop();
+        for (let i = 0; i < prioritySortedLoop.length; i++) {
+            let thisItem = prioritySortedLoop[i];
             if (thisItem && thisItem.act != null) {
                 thisItem.act();
             } else {
                 console.warn("Item didn't have an act() method.");
             }
         }  
+    }
+
+    /**
+     * Takes this._loop and returns a copy, sorted by each actor's this._priority
+     * value.
+     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+     */
+    getSortedLoop() {
+        return this._loop.sort((a, b) => a._priority - b._priority);
     }
 
     /**

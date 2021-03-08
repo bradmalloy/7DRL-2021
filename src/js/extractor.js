@@ -2,6 +2,7 @@ import { Building } from "./building.js"
 import { Inventory } from "./inventory.js";
 
 const defaultExtractorDelay = 5;
+const extractorTestUi = document.getElementById("extractorCounter");
 
 class Extractor extends Building {
     /**
@@ -19,7 +20,7 @@ class Extractor extends Building {
     }
 
     act() {
-        if (this._running && this.ticksUntilPull == 0) {
+        if (this._running && this.ticksUntilPull < 1) {
             // check to see what tile we're on
             // if the tile has resources, move one into our inventory
             // for now, just test value
@@ -28,6 +29,13 @@ class Extractor extends Building {
         } else {
             this.ticksUntilPull -= 1;
         }
+        let itemType = this.inventory.getRandomItemType();
+        if (!itemType) {
+            return;
+        }
+        let amount = this.inventory.count(itemType);
+        let uiText = `${itemType}: ${amount}`;
+        extractorTestUi.innerText = uiText;
     }
 }
 
