@@ -34,6 +34,9 @@ class Tile {
     countResources() {
         return this.resources;
     }
+    hasResources() {
+        return this.tileType != "empty" && this.countResources() > 0;
+    }
     getType() {
         return this.tileType;
     }

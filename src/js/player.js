@@ -10,6 +10,7 @@ const keyMappings = {
   27: "Escape",
   8: "Backspace",
   46: "Delete",
+  32: "Space", // manual actions (mining, toggling on/off buildings)
   37: 6, // left arrow (ROT.DIRS)
   38: 0, // up arrow
   39: 2, // right arrow
@@ -114,11 +115,26 @@ class Player {
                 // ex: a building costs 150 iron, return 75 at 0.5 refundRate
                 let amountToRefund = Math.ceil(staticCost[key] * config.game.buildingRefundRate);
                 this.inventory.add(key, amountToRefund);
+                this.updateInventoryUi();
             }
             // Remove it from the tile
             currentTile.removeActor();
         }
         return;
+    }
+
+    // Manually mine resources
+    // TODO: make this return a random amount of resources and add a timeout
+    // right now it's super, super fast lmao
+    if (code == "Space") {
+        if (!currentTile.hasBuilding() && currentTile.hasResources()) {
+            let minedAmount = currentTile.extractResource();
+            // null is returned if the tile can't give us a resource for some reason
+            if (minedAmount) {
+                this.inventory.add(minedAmount, 1);
+                this.updateInventoryUi();
+            }
+        }
     }
 
     // Pickup resources
