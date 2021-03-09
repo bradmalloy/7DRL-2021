@@ -18,10 +18,9 @@ var options = {
     tileSet: tileSet,
     tileMap: {
         "?": [1276, 1277],      // question mark
-        "coal": [522, 54],   // temp question mark
-        ".": [418, 54],         // empty ground
-        "1": [366, 54],                // iron ground
-        "2": [522, 54],                 // coal ground
+        "empty": [418, 54],         // empty ground
+        "iron": [366, 54],                // iron ground
+        "coal": [522, 54],                 // coal ground
         "e": [1276, 470],       // extractor
         "Ln": [626, 964],       // Loader, north input
         "Ls": [626, 938],       // Loader, south input
@@ -136,7 +135,7 @@ const Game = {
                 if (ironMap._map[x][y] == 1) {
                     let key = `${x},${y}`
                     let tile = this.map[key];
-                    tile.setType("iron");
+                    tile.addResources("iron", 5);
                 }
             }
         }
@@ -159,7 +158,7 @@ const Game = {
                     let key = `${x},${y}`
                     let tile = this.map[key];
                     if (tile.tileType == "empty") {
-                        tile.setType("coal");
+                        tile.addResources("coal", 5);
                     }
                 }
             }

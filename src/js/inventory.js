@@ -106,6 +106,8 @@ class Inventory {
     /**
      * Get the name of an item that we have more than 1 of in our inventory.
      * 
+     * This pulls the *only* item type for inventories which only have 1 thing.
+     * 
      * When pulling things out of the inventory, sometimes we just want 
      * to get any old item, not something specific (ex: conveyor belts).
      * For conveyor belts specifically, this pulls the *only* item type.
