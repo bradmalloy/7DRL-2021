@@ -3,9 +3,11 @@ import { Inventory } from "./inventory.js";
 import { Game } from "./index.js";
 
 const defaultExtractorDelay = 5;
-const extractorTestUi = document.getElementById("extractorCounter");
 
 class Extractor extends Building {
+    static cost = { 'iron': 200 }
+    static requiresFacing = false;
+
     /**
      * Extractors generate a mineral every `delay` turns.
      * @param {number} x x coordinates
@@ -30,7 +32,7 @@ class Extractor extends Building {
             var toAdd = this._tile.extractResource();
             if (toAdd) {
                 this.ticksUntilPull = this.delay;
-                this.inventory.add(toAdd);
+                this.inventory.add(toAdd, 1);
             } else {
                 // if the tile's empty, shut down the miner
                 this._running = false;
@@ -39,15 +41,9 @@ class Extractor extends Building {
             // if we're running but on cooldown, decrement the counter
             this.ticksUntilPull -= 1;
         }
-        // update the UI
-        let itemType = this.inventory.getRandomItemType();
-        if (!itemType) {
-            return;
-        }
-        let amount = this.inventory.count(itemType);
-        let uiText = `${itemType}: ${amount}`;
-        extractorTestUi.innerText = uiText;
     }
+
+    getName() { return "Extractor"; }
 }
 
 export { Extractor };

@@ -10,6 +10,9 @@ const facingTile = {
 }
 
 class Loader extends Building {
+    static cost = { 'iron': 75 }
+    static requiresFacing = true;
+
     constructor(x, y, inDir) {
         // Pick the tile based on facing
         let repr = facingTile[inDir];
@@ -49,9 +52,9 @@ class Loader extends Building {
             if (inTile?.actor?.inventory.hasItems() && outTile?.actor?.inventory.canAcceptItem()) {
                 // If so, take out whatever's there and push it out the other side
                 let typeToMove = inTile.actor.inventory.getRandomItemType();
-                let successfullyRemovedItem = inTile.actor.inventory.remove(typeToMove);
+                let successfullyRemovedItem = inTile.actor.inventory.remove(typeToMove, 1);
                 if (successfullyRemovedItem) {
-                    let gaveItem = outTile.actor.inventory.add(typeToMove);
+                    let gaveItem = outTile.actor.inventory.add(typeToMove, 1);
                     console.debug(`Loader moved an item from [${this._inKey}] to [${this._outKey}]`);
                     if (!gaveItem) {
                         console.error(`Loader at ${this.getPositionKey()} deleted an item 😭`);
@@ -60,6 +63,8 @@ class Loader extends Building {
             }
         }
     }
+
+    getName() { return "Loader"; }
 }
 
 export { Loader };

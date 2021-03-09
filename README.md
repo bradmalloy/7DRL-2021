@@ -28,3 +28,13 @@ First, install all requirements with `npm install`, then use `http-server .` in 
 - Autorogue
 - Automagic (if it ends up magic-themed?)
 - Romatic
+
+## Bugs
+
+### Conveyor Belt Browser Crash
+2021-03-08 @ 10:23 pm
+1. Place a line of conveyor belts and connect a miner and box
+2. Delete one belt in the middle
+3. Place a new belt that outputs to an empty tile
+4. Browser tab crashes
+

@@ -13,6 +13,9 @@ const facingTile = {
 };
 
 class Conveyor extends Building {
+    static cost = { 'iron': 50 }
+    static requiresFacing = true;
+
     /**
      * Conveyor belts don't load anything - they only spit out their
      * contents in the direction indicated by the outputDirection.
@@ -76,10 +79,10 @@ class Conveyor extends Building {
                 let typeToMove = this.inventory.getRandomItemType();
                 // Try to add it to our outTile
                 if (typeToMove) {
-                    let result = outTile.actor.inventory.add(typeToMove);
+                    let result = outTile.actor.inventory.add(typeToMove, 1);
                     if (result) {
                         // If we succeeded, remove our copy of it
-                        this.inventory.remove(typeToMove);
+                        this.inventory.remove(typeToMove, 1);
                     }
                 }
             }
@@ -152,6 +155,8 @@ class Conveyor extends Building {
             return [this._repr, this.inventory.getRandomItemType()];
         }
     }
+
+    getName() { return "Conveyor Belt"; }
 }
 
 export { Conveyor };

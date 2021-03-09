@@ -32,9 +32,22 @@
             <!-- The game is rendered in this -->
             <div id="gameCanvas"></div>
             <div id="sidebar">
-                <label for="frameCounter">Frame: </label><span id="frameTimer">0</span>
-                <label for="extractorCounter">Extractor: </label><span id="extractorCounter">0</span>
-                <label for="testBoxCounter">Box: </label><span id="testBoxCounter">0</span>
+                <div class="sidebarBox" id="currentTileBox">
+                    <strong><span id="currentTilePosition">[1,1]</span></strong>
+                    <div id="currentTileInfo">
+                        <label for="currentTileBuilding">Building: </label><span id="currentTileBuilding">Empty</span>
+                        <label for="currentTileResources">Tile Resources: </label><span id="currentTileResources">None</span>
+                    </div>
+                </div>
+                <div class="sidebarBox" id="playerInfo">
+                    <strong><span>Inventory</span></strong>
+                    <ul id="playerInventoryList">
+
+                    </ul>
+                </div>
+                <div class="sidebarBox" id="buildingInfo">
+                    <strong><span>Buildings</span></strong>
+                </div>
             </div>
         </div>
         <div id="buildMenu">

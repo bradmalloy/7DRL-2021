@@ -1,4 +1,5 @@
 import { Game } from './index.js';
+import { Building } from './building.js';
 
 class Tile {
     constructor(tileType, x, y) {
@@ -30,11 +31,17 @@ class Tile {
         this.resources -= 1;
         return this.tileType;
     }
+    countResources() {
+        return this.resources;
+    }
     getType() {
         return this.tileType;
     }
-    isEmpty() {
-        return this.actor == null;
+    /**
+     * Does this tile have a building?
+     */
+    hasBuilding() {
+        return this.actor != null && this.actor instanceof Building;
     }
     addActor(actor) {
         if (this.actor) {
@@ -44,12 +51,9 @@ class Tile {
         this.actor = actor;
         Game.display.draw(this._x, this._y, this.display());
     }
-    removeActor(actor) {
-        if (actor == this.actor) {
-            this.actor = null;
-        } else {
-            console.error("Tried to remove the wrong actor?");
-        }
+    removeActor() {
+        Game.engine.remove(this.actor);
+        this.actor = null;
         Game.display.draw(this._x, this._y, this.display());
     }
     display() {

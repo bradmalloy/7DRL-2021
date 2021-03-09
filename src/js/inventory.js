@@ -20,40 +20,58 @@ class Inventory {
     }
 
     /**
-     * Store 1 of an item, if there's room.
-     * If we can, return true. If we can't, return false.
+     * Store an arbitrary number of things.
+     * If it works, return true. If not, return false.
      * @param {string} itemType the thing to store
+     * @param {number} amount the amount to store
      */
-    add(itemType) {
-        if (!itemType) {
+    add(itemType, amount) {
+        if (!itemType || !amount) {
+            console.error("⛔ Inventory.add() missing an argument!");
             return;
         }
         let existingAmount = this._bag[itemType];
         if (existingAmount) {
             // ex: maxSize 1 - only accept if we have 0
-            if (existingAmount < this._maxSize) {
-                this._bag[itemType] += 1;
+            if ((existingAmount + amount) < this._maxSize) {
+                this._bag[itemType] += amount;
                 return true;
             } else {
                 return false;
             }
         } else {
-            this._bag[itemType] = 1;
+            this._bag[itemType] = amount;
             return true;
         }
     }
 
     /**
-     * Decrement 1 of some item. If it doesn't exist, return null.
+     * Decrement some amount of some item. If it doesn't exist, return 0.
+     * If it does, return how much was removed.
      * @param {string} itemType which item to grab.
+     * @param {number} amount how much to remove
      */
-    remove(itemType) {
+    remove(itemType, amount) {
+        let existingAmount = this._bag[itemType];
+        if ((existingAmount - amount) >= 0) {
+            this._bag[itemType] -= amount;
+            return amount;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Remove all the items, and return the number which was removed.
+     * @param {string} itemType which item to grab
+     */
+    removeAll(itemType) {
         let existingAmount = this._bag[itemType];
         if (existingAmount) {
-            this._bag[itemType] -= 1;
-            return true;
+            this._bag[itemType] = 0;
+            return existingAmount;
         } else {
-            return false;
+            return 0;
         }
     }
 
@@ -79,6 +97,10 @@ class Inventory {
         return Object.values(this._bag).reduce(doSum, 0) < this._maxSize;
     }
 
+    /**
+     * Return the number of the given type of item exist in the bag.
+     * @param {string} itemType the item type to check
+     */
     count(itemType) {
         if (!itemType) {
             console.error("Invalid itemType for count()");
@@ -101,6 +123,21 @@ class Inventory {
             }
         }
         return keysWithItems;
+    }
+
+    /**
+     * Generates an array of <li> elements to be placed in an HTML UI element.
+     */
+    generateListItems() {
+        var output = [];
+        let itemTypesWithMoreThanZero = this.getItemTypes();
+        for (let index in itemTypesWithMoreThanZero) {
+            let itemType = itemTypesWithMoreThanZero[index];
+            let elem = document.createElement("li");
+            elem.innerText = `${itemType}: ${this._bag[itemType]}`
+            output.push(elem);
+        }
+        return output;
     }
 
     /**

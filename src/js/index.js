@@ -36,15 +36,23 @@ var options = {
 }
 
 var gameWrapper = document.getElementById("gameCanvas");
-var frameTimer = document.getElementById("frameTimer");
-var frame = 0;
+
+// innerText ex: [1,1]
+const currentTilePositionElement = document.getElementById("currentTilePosition");
+// innerText ex: "Empty", "Extractor", etc
+const currentTileBuildingElement = document.getElementById("currentTileBuilding");
+// innerText ex: "None", "Iron: 200"
+const currentTileResourcesElement = document.getElementById("currentTileResources");
 
 const doSum = (accumulator, currentValue) => accumulator + currentValue;
 
 class Clock {
+    constructor() {
+        this.frame = 0;
+    }
+
     act() {
-        frameTimer.innerText = "" + frame;
-        frame += 1;
+        this.frame += 1;
     }
 } 
 
@@ -99,6 +107,24 @@ const Game = {
     },
 
     /**
+     * Update the HTML UI with the stats for the tile under the player.
+     */
+    updateCurrentTileUi() {
+        let theTile = this.map[this.player.getPositionKey()];
+        currentTilePositionElement.innerText = `[${theTile.getPositionKey()}]`;
+        if (theTile.hasBuilding()) {
+            currentTileBuildingElement.innerText = theTile.actor.getName();
+        } else {
+            currentTileBuildingElement.innerText = "None";
+        }
+        if (theTile.tileType != "empty") {
+            currentTileResourcesElement.innerText = `${theTile.getType()}: ${theTile.countResources()}`;
+        } else {
+            currentTileResourcesElement.innerText = "No Resources";
+        }
+    },
+
+    /**
      * Draw a map, then fill it with resources.
      * Iron, coal, and copper.
      */
@@ -135,7 +161,8 @@ const Game = {
                 if (ironMap._map[x][y] == 1) {
                     let key = `${x},${y}`
                     let tile = this.map[key];
-                    tile.addResources("iron", 5);
+                    let resourceAmount = this._calculateResourceAmount(x, y, ironMap._map, "iron");
+                    tile.addResources("iron", resourceAmount);
                 }
             }
         }
@@ -158,11 +185,54 @@ const Game = {
                     let key = `${x},${y}`
                     let tile = this.map[key];
                     if (tile.tileType == "empty") {
-                        tile.addResources("coal", 5);
+                        let resourceAmount = this._calculateResourceAmount(x, y, coalMap._map, "coal");
+                        tile.addResources("coal", resourceAmount);
                     }
                 }
             }
         }
+    },
+
+    /**
+     * Calculates the amount of resources based on the number of
+     * similarly resourced neighbors the tile has.
+     * The map should have a 2d array of 0 and 1, where is a resource-bearing tile
+     * and 0 isn't.
+     * @param {number} x x coordinate
+     * @param {number} y y coordinate
+     * @param {aray} map a 2d array with values of 0 or 1
+     * @param {string} tileType for looking up config values
+     */
+    _calculateResourceAmount(x, y, map, tileType) {
+        var toCalc = map[x][y];
+        if (toCalc == 0) {
+            // in case we somehow pass an empty tile in here
+            return 0;
+        }
+        // Values from config
+        var baseValue = config.map.resources[tileType].baseAmountPerTile;
+        var multiplier = config.map.resources[tileType].amountPerAdditionalTile;
+        var adjascentTiles = 0;
+        // Get all the tiles
+        try { var north = map[x][y-1]; } catch (error) {}
+        try { var northEast = map[x+1][y-1]; } catch (error) {}
+        try { var northWest = map[x-1][y-1]; } catch (error) {}
+        try { var east = map[x+1][y]; } catch (error) {}
+        try { var west = map[x-1][y]; } catch (error) {}
+        try { var southEast = map[x+1][y+1]; } catch (error) {}
+        try { var south = map[x][y+1]; } catch (error) {}
+        try { var southWest = map[x-1][y+1]; } catch (error) {}
+
+        if (north) { adjascentTiles += 1};
+        if (northEast) { adjascentTiles += 1};
+        if (east) { adjascentTiles += 1};
+        if (southEast) { adjascentTiles += 1};
+        if (south) { adjascentTiles += 1};
+        if (southWest) { adjascentTiles += 1};
+        if (west) { adjascentTiles += 1};
+        if (northWest) { adjascentTiles += 1};
+
+        return baseValue + (multiplier * adjascentTiles);
     },
 
     _fillMapWithTestData() {

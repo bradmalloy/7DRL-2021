@@ -1,12 +1,13 @@
 import { Inventory } from "./inventory.js";
 import { Building } from "./building.js";
 
-const uiCounter = document.getElementById("testBoxCounter");
-
 /**
  * Stores a small number of items.
  */
 class Box extends Building {
+    static cost = { 'iron': 200 }
+    static requiresFacing = false;
+
     constructor(x, y) {
         super(x, y, "b");
         this.inventory = new Inventory(50);
@@ -24,14 +25,16 @@ class Box extends Building {
         if (!itemType) {
             return;
         }
-        let amount = this.inventory.count(itemType);
-        let uiText = `${itemType}: ${amount}`
-        if (uiText != this.lastUiUpdate) {
-            uiCounter.innerText = uiText;
-            this.lastUiUpdate = uiText;
-        }
-        return;
+        // let amount = this.inventory.count(itemType);
+        // let uiText = `${itemType}: ${amount}`
+        // if (uiText != this.lastUiUpdate) {
+        //     uiCounter.innerText = uiText;
+        //     this.lastUiUpdate = uiText;
+        // }
+        // return;
     }
+
+    getName() { return "Small Box"; }
 }
 
 export { Box };
