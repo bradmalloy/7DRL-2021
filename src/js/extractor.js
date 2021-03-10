@@ -29,10 +29,11 @@ class Extractor extends Building {
         if (this._running && this.ticksUntilPull < 1) {
             // Try to extract resources from the tile
             // Returns null if the tile is empty or out of resources.
-            var toAdd = this._tile.extractResource();
+            var toAdd = this._tile.getType()
+            var amount = this._tile.extractResources(1);
             if (toAdd) {
                 this.ticksUntilPull = this.delay;
-                this.inventory.add(toAdd, 1);
+                this.inventory.add(toAdd, amount);
             } else {
                 // if the tile's empty, shut down the miner
                 this._running = false;

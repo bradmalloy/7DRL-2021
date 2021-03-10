@@ -23,13 +23,14 @@ class Tile {
      * Remove one copy of the resource from this tile and return the type.
      * If no resources are left, returns null.
      */
-    extractResource() {
+    extractResources(amountToExtract) {
         if (this.resources < 1 || this.tileType == "empty") {
             this.tileType = "empty";
             return null;
         }
-        this.resources -= 1;
-        return this.tileType;
+        let toRemove = Math.min(amountToExtract, this.resources);
+        this.resources -= toRemove;
+        return toRemove;
     }
     countResources() {
         return this.resources;

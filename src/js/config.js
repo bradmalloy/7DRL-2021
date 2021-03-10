@@ -21,7 +21,9 @@ const config = {
     },
     game: {
         frameDelay: 250,
-        buildingRefundRate: 0.5
+        buildingRefundRate: 0.5,
+        pickaxeCooldownTime: 5000,
+        pickaxeRewardMax: 15
     }
 }
 

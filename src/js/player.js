@@ -40,6 +40,7 @@ const moveKeys = [6, 0, 2, 4];
 const buildMenuElement = document.getElementById("buildMenu");
 
 const playerInventoryListElement = document.getElementById("playerInventoryList");
+const mineCooldownIconElement = document.getElementById("mineCooldownIcon");
 
 /**
  * For now, the player is just a cursor w/o a physical body.
@@ -55,6 +56,9 @@ class Player {
     this._buildingOnDeck = null;
     // Player now has an inventory from which resources are spent to build buildings
     this.inventory = new Inventory(99999);
+
+    // Only let the player mine resources on a cooldown
+    this.canMine = true;
 
     // TODO: remove this
     this.inventory.add("iron", 500);
@@ -127,12 +131,20 @@ class Player {
     // TODO: make this return a random amount of resources and add a timeout
     // right now it's super, super fast lmao
     if (code == "Space") {
-        if (!currentTile.hasBuilding() && currentTile.hasResources()) {
-            let minedAmount = currentTile.extractResource();
+        if (!currentTile.hasBuilding() && currentTile.hasResources() && this.canMine) {
+            let randomReward = Math.floor(Math.random() * config.game.pickaxeRewardMax);
+            let minedType = currentTile.getType();
+            let minedAmount = currentTile.extractResources(randomReward);
             // null is returned if the tile can't give us a resource for some reason
             if (minedAmount) {
-                this.inventory.add(minedAmount, 1);
+                this.inventory.add(minedType, minedAmount);
                 this.updateInventoryUi();
+                this.canMine = false;
+                mineCooldownIconElement.innerText = "🚫";
+                window.setTimeout(() => {
+                    this.canMine = true;
+                    mineCooldownIconElement.innerText = "✅";
+                }, config.game.pickaxeCooldownTime);
             }
         }
     }
