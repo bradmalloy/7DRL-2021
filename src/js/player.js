@@ -5,7 +5,6 @@ import { Game } from "./index.js";
 import { Inventory } from "./inventory.js";
 import { Loader } from "./loader.js";
 import { Box } from "./storage.js";
-import { Generator } from "./generator.js";
 
 const keyMappings = {
   27: "Escape",
@@ -193,8 +192,6 @@ class Player {
             this._buildingOnDeck = 'conveyor';
         } else if (code == 's') {
             this.constructBuilding(Box);
-        } else if (code == 'g') {
-            this.constructBuilding(Generator);
         }
     }
 
