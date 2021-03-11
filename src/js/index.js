@@ -21,6 +21,7 @@ var options = {
         "empty": [418, 54],         // empty ground
         "iron": [366, 54],                // iron ground
         "coal": [522, 54],                 // coal ground
+        "g": [652, 990],        // generator
         "e": [1276, 470],       // extractor
         "Ln": [626, 964],       // Loader, north input
         "Ls": [626, 938],       // Loader, south input
@@ -113,7 +114,8 @@ const Game = {
         let theTile = this.map[this.player.getPositionKey()];
         currentTilePositionElement.innerText = `[${theTile.getPositionKey()}]`;
         if (theTile.hasBuilding()) {
-            currentTileBuildingElement.innerText = theTile.actor.getName();
+            let buildingText = theTile.actor.getName() + " " + theTile.actor?.inventory?.getSummary();
+            currentTileBuildingElement.innerText = buildingText;
         } else {
             currentTileBuildingElement.innerText = "None";
         }
@@ -266,6 +268,14 @@ const Game = {
 
 window.loadGame = function() {
     Game.init();
+}
+
+window.depositItemFromUi = function(itemType) {
+    var amount = document.getElementById(`player-${itemType}`).value;
+    if (!amount) {
+        return;
+    }
+    Game.player.depositItem(itemType, amount);
 }
 
 export { Game };

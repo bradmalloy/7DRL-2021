@@ -5,6 +5,7 @@ import { Game } from "./index.js";
 import { Inventory } from "./inventory.js";
 import { Loader } from "./loader.js";
 import { Box } from "./storage.js";
+import { Generator } from "./generator.js";
 
 const keyMappings = {
   27: "Escape",
@@ -127,10 +128,13 @@ class Player {
         return;
     }
 
-    // Manually mine resources
-    // TODO: make this return a random amount of resources and add a timeout
-    // right now it's super, super fast lmao
+    // Manually mine resources or toggle a building running or not
     if (code == "Space") {
+        // toggle building
+        if (currentTile.hasBuilding()) {
+            currentTile.actor.toggleRunning();
+        }
+        // mining
         if (!currentTile.hasBuilding() && currentTile.hasResources() && this.canMine) {
             let randomReward = Math.floor(Math.random() * config.game.pickaxeRewardMax);
             let minedType = currentTile.getType();
@@ -189,6 +193,8 @@ class Player {
             this._buildingOnDeck = 'conveyor';
         } else if (code == 's') {
             this.constructBuilding(Box);
+        } else if (code == 'g') {
+            this.constructBuilding(Generator);
         }
     }
 
@@ -271,6 +277,28 @@ class Player {
   }
 
   /**
+   * If we're standing over a building with an inventory, drop as many items as we can
+   * into the inventory.
+   * @param {string} itemType which item to drop
+   * @param {number} amount amount to drop
+   */
+  depositItem(itemType, amount) {
+    var currentTile = Game.map[this.getPositionKey()];
+    if (!currentTile.hasBuilding() || !currentTile.actor.inventory) {
+        return;
+    }
+    if (this.inventory.count(itemType) < amount) {
+        return;
+    }
+    // False if we failed to add, true if we did
+    let result = currentTile.actor.inventory.add(itemType, amount);
+    if (result) {
+        this.inventory.remove(itemType, amount);
+        this.updateInventoryUi();
+    }
+  }
+
+  /**
    * Delete old inventory items and replace them with current inventory.
    */
   updateInventoryUi() {
@@ -278,7 +306,7 @@ class Player {
     while (playerInventoryListElement.firstChild) {
         playerInventoryListElement.removeChild(playerInventoryListElement.firstChild);
     }
-    let newListItems = this.inventory.generateListItems();
+    let newListItems = this.inventory.generateListItemsWithDiscard();
     // attach new ones
     newListItems.forEach(listItem => playerInventoryListElement.appendChild(listItem));
   }

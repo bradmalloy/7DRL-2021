@@ -38,3 +38,6 @@ First, install all requirements with `npm install`, then use `http-server .` in 
 3. Place a new belt that outputs to an empty tile
 4. Browser tab crashes
 
+## ToDo notes to self
+
+Player needs to be able to deposit items into buildins. Right now, we only drop all or nothing - needs to check how much it can drop before it does.

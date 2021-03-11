@@ -17,6 +17,7 @@ class Inventory {
         this.hasItems = this.hasItems.bind(this);
         this.getItemTypes = this.getItemTypes.bind(this);
         this.getRandomItemType = this.getRandomItemType.bind(this);
+        this.getSummary = this.getSummary.bind(this);
     }
 
     /**
@@ -141,6 +142,39 @@ class Inventory {
     }
 
     /**
+     * Generates an array of <li> elements to be placed in an HTML UI element.
+     * Includes an onClick that causes the player to drop the given item.
+     */
+    generateListItemsWithDiscard() {
+        var output = [];
+        let itemTypesWithMoreThanZero = this.getItemTypes();
+        for (let index in itemTypesWithMoreThanZero) {
+            let itemType = itemTypesWithMoreThanZero[index];
+            let amount = this._bag[itemType];
+            let wrapperElem = document.createElement("div");
+            // create label
+            let labelElem = document.createElement("label");
+            labelElem.setAttribute("for", `player-${itemType}`);
+            labelElem.innerText = `[${itemType}] ${amount}`;
+            // create inputs to drop
+            let numInputElem = document.createElement("input");
+            numInputElem.setAttribute("id", `player-${itemType}`);
+            numInputElem.setAttribute("size", 4);
+            numInputElem.setAttribute("type", "number");
+            let buttonElem = document.createElement("input");
+            buttonElem.setAttribute("type", "button");
+            buttonElem.setAttribute("value", "Deposit");
+            buttonElem.setAttribute("onClick", `window.depositItemFromUi('${itemType}')`);
+            // attach them all
+            wrapperElem.appendChild(labelElem);
+            wrapperElem.appendChild(numInputElem);
+            wrapperElem.appendChild(buttonElem);
+            output.push(wrapperElem);
+        }
+        return output;
+    }
+
+    /**
      * Get the name of an item that we have more than 1 of in our inventory.
      * 
      * This pulls the *only* item type for inventories which only have 1 thing.
@@ -156,6 +190,20 @@ class Inventory {
         }
         let index = Math.floor(Math.random() * Math.floor(keysLength));
         return this.getItemTypes()[index];
+    }
+
+    /**
+     * Returns a very short summary of item types and amounts as a string.
+     * Used in the right-side UI under "current tile" info.
+     */
+    getSummary() {
+        var output = "";
+        var types = this.getItemTypes();
+        for (let i = 0; i < types.length; i++) {
+            let amount = this.count(types[i]);
+            output += `\n[${types[i]}] ${amount} `
+        }
+        return output;
     }
 }
 

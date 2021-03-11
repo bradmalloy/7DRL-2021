@@ -23,6 +23,11 @@ class Building {
         this._running = true;
     }
 
+    toggleRunning() {
+        this._running = !this._running;
+        console.debug(`[${this.getPositionKey()}] was toggled ${this._running ? "on" : "off"}`);
+    }
+
     getPositionKey() { return `${this._x},${this._y}`; }
 
     stop() {
