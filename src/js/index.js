@@ -22,7 +22,6 @@ var options = {
         "iron": [366, 54],                // iron ground
         "coal": [522, 54],                 // coal ground
         "copper": [132, 184],   // copper ground
-        "g": [652, 990],        // generator
         "e": [1276, 470],       // extractor
         "Ln": [626, 964],       // Loader, north input
         "Ls": [626, 938],       // Loader, south input

@@ -22,21 +22,9 @@ class Extractor extends Building {
         this._priority = 1; // see realTimeEngine.update()
         // Used to check for resource type, etc
         this._tile = Game.map[this.getPositionKey()];
-
-        // Check for power
-        this.powerSystem = {
-            requirement: 50,
-            conducts: true,
-            available: 0
-        }
     }
 
     act() {
-        // Check that our power needs are met
-        if (this.powerSystem.requirement > this.powerSystem.available) {
-            this._running = false;
-            return;
-        }
         // Only act if we're running and off cooldown
         if (this._running && this.ticksUntilPull < 1) {
             // Try to extract resources from the tile
