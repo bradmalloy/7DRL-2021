@@ -1,3 +1,4 @@
+import { Building } from "./building.js";
 import { Extractor } from "./extractor.js";
 import { Loader } from "./loader.js";
 import { Conveyor } from "./conveyor.js";
@@ -97,6 +98,30 @@ const Game = {
             var y = parseInt(parts[1]);
             let toDisplay = this.map[key].display();
             this.display.draw(x, y, toDisplay);
+        }
+        // Draw buildings after, since they're more complex and can take up multiple tiles
+        for (let index in this.engine._loop) {
+            var actor = this.engine._loop[index];
+            if (!(actor instanceof Building)) {
+                continue;
+            }
+            // Current x, current y
+            let minX = actor._x;
+            let minY = actor._y;
+            let width = actor._repr.length;
+            let height = actor._repr[0].length;
+            let maxX = (minX + width) - 1; // width of 1, max == min
+            let maxY = (minY + height) - 1;
+            for (let x = minX; x <= maxX; x++) {
+                // this is the index of the _repr to access
+                let ix = 0;
+                for (let y = minY; y <= maxY; y++) {
+                    let iy = 0;
+                    this.display.draw(x, y, actor._repr[ix][iy]);
+                    iy++;
+                }
+                ix++;
+            }
         }
         this.drawPlayer();
     },

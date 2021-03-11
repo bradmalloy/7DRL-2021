@@ -9,10 +9,24 @@ import { Game } from "./index.js";
  * `repr` is a character or short code that maps to a tile.
  */
 class Building {
+    /**
+     * An example would be:
+     * x = 1
+     * y = 1
+     * repr = [null, "#", null, null, "#", null, "#", "#", "#"]
+     * 
+     * This would draw an inverted T shape:
+     * _#_
+     * _#_
+     * ###
+     * @param {number} x top-left x value (or only x value)
+     * @param {number} y top-left y value (or only y value)
+     * @param {Array of Arrays} repr 2d array of charMap codes
+     */
     constructor(x, y, repr) {
         this._x = x;
         this._y = y;
-        this._repr = repr ? repr : "?";
+        this._repr = repr ? repr : ["?"];
         this._running = false;
         this._priority = null;
         Game.map[this.getPositionKey()].addActor(this);

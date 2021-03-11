@@ -15,7 +15,7 @@ class Extractor extends Building {
      * @param {number} delay generate 1 mineral every x turns
      */
     constructor(x, y, delay) {
-        super(x, y, "e");
+        super(x, y, [["e"],["e"]]);
         this.delay = delay ? delay : defaultExtractorDelay;
         this.ticksUntilPull = this.delay;
         this.inventory = new Inventory(25);
