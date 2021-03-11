@@ -62,7 +62,7 @@ class Player {
     this.canMine = true;
 
     // TODO: remove this
-    this.inventory.add("iron", 500);
+    this.inventory.add("iron", 1000);
     this.updateInventoryUi();
 
     // Maps to handleEvent(e)

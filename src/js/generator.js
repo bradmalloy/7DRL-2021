@@ -16,6 +16,9 @@ class Generator extends Building {
         super(x, y);
         this._repr = "g";
         this.powerGenerated = 500;
+        // Consume fuel every 5 turns
+        this.ticksUntilGen = 10;
+        this.delay = this.ticksUntilGen;
         this.inventory = new Inventory(500);
     }
 
@@ -24,6 +27,10 @@ class Generator extends Building {
     }
 
     act() {
+        if (this.ticksUntilGen != 0) {
+            this.ticksUntilGen -= 1;
+            return;
+        }
         // If we run out of power, we'll stop running and providing power
         if (this._running) {
             let success = this.inventory.remove("coal", 1);
@@ -33,6 +40,7 @@ class Generator extends Building {
                 return;
             }
             this._updateAllDirections(this.powerGenerated);
+            this.ticksUntilGen = this.delay; 
         } else {
             // if we're not running, update to 0 power
             this._updateAllDirections(0);

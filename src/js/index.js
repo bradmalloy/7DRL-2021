@@ -21,6 +21,7 @@ var options = {
         "empty": [418, 54],         // empty ground
         "iron": [366, 54],                // iron ground
         "coal": [522, 54],                 // coal ground
+        "copper": [132, 184],   // copper ground
         "g": [652, 990],        // generator
         "e": [1276, 470],       // extractor
         "Ln": [626, 964],       // Loader, north input
@@ -193,6 +194,31 @@ const Game = {
                 }
             }
         }
+
+        // Same for copper
+        var sumCopperTiles = 0;
+        while (sumCopperTiles <= config.map.resources.copper.minTiles) {
+            var copperMap = new ROT.Map.Cellular(width, height, { connected: true });
+            copperMap.randomize(config.map.resources.copper.baseChance);
+            for (let i = 0; i< config.map.resources.copper.generations; i++) {
+                copperMap.create();
+            }
+            sumCopperTiles = copperMap._map.flat().reduce(doSum, 0);
+        }
+
+        // Change tiles to "copper", but only if they're empty!
+        for (let x = 0; x < width; x++) {
+            for (let y = 0; y < height; y++) {
+                if (copperMap._map[x][y] == 1) {
+                    let key = `${x},${y}`
+                    let tile = this.map[key];
+                    if (tile.tileType == "empty") {
+                        let resourceAmount = this._calculateResourceAmount(x, y, copperMap._map, "copper");
+                        tile.addResources("copper", resourceAmount);
+                    }
+                }
+            }
+        }
     },
 
     /**
@@ -278,4 +304,4 @@ window.depositItemFromUi = function(itemType) {
     Game.player.depositItem(itemType, amount);
 }
 
-export { Game };
+export { Game, doSum };
