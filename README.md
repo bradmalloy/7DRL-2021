@@ -9,8 +9,8 @@ This game is a roguelike take on the automation strategy genre.
 First, install all requirements with `npm install`, then use `http-server .` in the `/src` folder to serve files. Then go to `localhost:8080` to see the game.
 
 ## Tech
-- Pack for web with Browserify
-- Deploy & host with Netlify
+- Pack for web with Browserify (todo)
+- Deploy & host with Netlify (todo)
 - rot.js for roguelike tools
 
 ## Notes
@@ -40,4 +40,4 @@ First, install all requirements with `npm install`, then use `http-server .` in 
 
 ## ToDo notes to self
 
-Player needs to be able to deposit items into buildins. Right now, we only drop all or nothing - needs to check how much it can drop before it does.
+None!
